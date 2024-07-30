@@ -1,0 +1,18 @@
+<div id="list-user">
+ <table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Username</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{ range .Users }}
+    <tr>
+      <td>{{ .Email }}</td>
+      <td>{{ .Username }}</td>
+    </tr>
+    {{ end }}
+  </tbody>
+</table> 
+</div>
