@@ -9,11 +9,11 @@ import (
 )
 
 func main() {
-  engine := html.New("./views/", ".html")
+    engine := html.New("./views/", ".html")
 
-  app := fiber.New(fiber.Config{
+    app := fiber.New(fiber.Config{
     Views: engine,
-  })
-  routes.SetupRoutes(app)
-  log.Fatal(app.Listen(":6969"))
+    })
+    routes.SetupRoutes(app)
+    log.Fatal(app.Listen(":6969"))
 }
