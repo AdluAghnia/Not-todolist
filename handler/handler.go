@@ -2,6 +2,8 @@ package handler
 
 import (
 	"log"
+
+	"github.com/AdluAghnia/not_todolist/auth"
 	"github.com/AdluAghnia/not_todolist/database"
 	"github.com/AdluAghnia/not_todolist/models"
 	"github.com/gofiber/fiber/v2"
@@ -74,20 +76,24 @@ func RegisterHandler(c *fiber.Ctx) error {
 
     valid, err := user.ValidateRegister()
     
-    if err != nil {
+    if !valid && err != nil {
         log.Printf("Error : %v", err.Error())
         return c.Render("todolist", fiber.Map{
             "Error": err.Error(),
         })
     }
+    
+    hash, err := auth.HashPassword(user.Password)
 
-    if valid {
-        db.Create(&models.User{
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+    db.Create(&models.User{
         Email: email,
         Username: username,
-        Password: password,
-        })
-    }
+        Password: hash,
+    })
 
     var users []models.User
     err = db.Find(&users).Error
