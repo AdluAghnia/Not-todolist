@@ -5,6 +5,7 @@ go 1.22.5
 require (
 	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/template/html/v2 v2.1.2
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	golang.org/x/crypto v0.14.0
 	gorm.io/driver/sqlite v1.5.6
 	gorm.io/gorm v1.25.11
