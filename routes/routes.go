@@ -10,7 +10,9 @@ func SetupRoutes(app *fiber.App) {
     app.Get("/migrate", handler.Migrate)
     app.Get("/register", handler.ViewRegister)
     app.Get("/todo", handler.ViewAddTask)
+    app.Get("/login", handler.ViewLogin)
 
+    app.Post("/api/login", handler.LoginHandler)
     app.Post("/api/register", handler.RegisterHandler)
     app.Post("/api/todo", handler.AddTaskHandler)
 }

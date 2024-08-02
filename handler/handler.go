@@ -22,7 +22,7 @@ func Migrate(c *fiber.Ctx) error {
 }
 
 func ViewRegister(c *fiber.Ctx) error {
-    return c.Render("index", fiber.Map{
+    return c.Render("register", fiber.Map{
         "Title": "Register",
     }, "layouts/main")
 }
@@ -30,6 +30,37 @@ func ViewRegister(c *fiber.Ctx) error {
 func ViewAddTask(c *fiber.Ctx) error {
     return c.Render("todo", fiber.Map{
         "Title": "Task",
+    }, "layouts/main")
+}
+
+func ViewLogin(c *fiber.Ctx) error {
+    return c.Render("login", fiber.Map{
+        "Title": "Login",
+    }, "layouts/main")
+}
+
+func LoginHandler(c *fiber.Ctx) error {
+    email := c.FormValue("email")
+    password := c.FormValue("password")
+
+    if email != "" && password != ""{
+        log.Println("OK")
+    }
+
+    user, err := auth.FindUserByEmail(email)
+    if err != nil {
+        log.Printf("Error : %v \n", err.Error())
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+    ok, err := auth.ComparePasswordHash(password, user.Password)
+    if !ok && err != nil {
+        log.Printf("Error : %v \n", err.Error())
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+    return c.Render("userinfo", fiber.Map{
+        "User": user,
     }, "layouts/main")
 }
 
