@@ -11,7 +11,7 @@ import (
 var jwtSecretKey = []byte("SECRET_KEY")
 
 func GenerateJWT(user *models.User) (string, error) {
-    token := jwt.NewWithClaims(jwt.SigningMethodES256, jwt.MapClaims{
+    token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
         "id": user.ID,
         "email": user.Email,
         "exp": time.Now().Add(time.Hour * 72).Unix(),

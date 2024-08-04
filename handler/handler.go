@@ -2,9 +2,11 @@ package handler
 
 import (
 	"log"
+	"time"
 
 	"github.com/AdluAghnia/not_todolist/auth"
 	"github.com/AdluAghnia/not_todolist/database"
+	"github.com/AdluAghnia/not_todolist/middleware"
 	"github.com/AdluAghnia/not_todolist/models"
 	"github.com/gofiber/fiber/v2"
 )
@@ -47,17 +49,33 @@ func LoginHandler(c *fiber.Ctx) error {
         log.Println("OK")
     }
 
+    // Find User by Email
     user, err := auth.FindUserByEmail(email)
     if err != nil {
         log.Printf("Error : %v \n", err.Error())
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
 
+    // Compare Input Password and stored password
     ok, err := auth.ComparePasswordHash(password, user.Password)
     if !ok && err != nil {
         log.Printf("Error : %v \n", err.Error())
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
+
+    // Generate JWT Token
+    token, err := middleware.GenerateJWT(&user)
+    if err != nil {
+        log.Printf("Error : %v \n", err.Error())
+        return c.Status(fiber.StatusInternalServerError).SendString("Couldn't generate token")
+    }
+
+    // Create Cookie
+    c.Cookie(&fiber.Cookie{
+        Name: "jwt",
+        Value: token,
+        Expires: time.Now().Add(24 * time.Hour),
+    })
 
     return c.Render("userinfo", fiber.Map{
         "User": user,
