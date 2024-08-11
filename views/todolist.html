@@ -1,5 +1,6 @@
 <div id="todo-list">
-  {{ range .Tasks }}
-  <p>{{ .Title }} - {{.Description}}</p>
+    <h1>Welcome, {{ .User.Username }}!</h1>
+    {{ range .Tasks }}
+    <p>{{ .Title }} - {{.Description}}</p>
   {{ end }}
 </div>

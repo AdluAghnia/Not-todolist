@@ -1,8 +1,14 @@
 <form id="form-register" hx-post="/api/register" hx-swap="innerHTML" hx-target="#list-user">
-  <input type="text" name="username" value="">
-  <input type="email" name="email" value="">
-  <input type="password" name="password" value="">
-  <button type="submit">Sign up</button>
+    <label for="username">Username :</label>
+    <input type="text" name="username" value="">
+
+    <label for="email">Email :</label>
+    <input type="email" name="email" value="">
+
+    <label for="password">Password :</label>
+    <input type="password" name="password" value="">
+    
+    <button type="submit">Sign up</button>
 </form>
 <p>{{ .Error }}</p>
 <div id="list-user">

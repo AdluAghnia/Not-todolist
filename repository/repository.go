@@ -33,3 +33,13 @@ func GetUserByEmail(db *gorm.DB, email string) (*models.User, error) {
 
     return &user, err
 }
+
+func UserExistByEmail(db *gorm.DB, email string) (bool, error) {
+    var count int64
+
+    if err := db.Model(&models.User{}).Where("email = ?", email).Count(&count).Error; err != nil {
+        return false, err
+    }
+
+    return count < 0, nil 
+}

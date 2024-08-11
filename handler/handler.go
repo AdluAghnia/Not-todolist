@@ -16,14 +16,6 @@ func IndexHandler(c *fiber.Ctx) error {
     return c.SendString("Hello")
 }
 
-func Migrate(c *fiber.Ctx) error {
-    db, err := database.Db()
-    if err != nil {
-        return err
-    }
-    return db.AutoMigrate(&models.User{}, &models.Todo{})
-}
-
 func ViewRegister(c *fiber.Ctx) error {
     return c.Render("register", fiber.Map{
         "Title": "Register",
@@ -89,28 +81,49 @@ func LoginHandler(c *fiber.Ctx) error {
     }, "layouts/main")
 }
 
+func LogoutHandler(c *fiber.Ctx) error {
+    c.Cookie(&fiber.Cookie{
+        Name: "jwt",
+        Value: "",
+        Expires: time.Now().Add(-time.Hour),
+        HTTPOnly: true,
+        Path: "/",
+    })
+
+    return c.Redirect("/", fiber.StatusSeeOther)
+}
+
 func AddTaskHandler(c *fiber.Ctx) error {
     db, err := database.Db()
+    
     if err != nil {
         return err
     }
 
     title := c.FormValue("title")
     description := c.FormValue("description")
+    user, err := middleware.GetUserFromContext(c)
+    if err != nil {
+        return err
+    }
 
     db.Create(&models.Todo{
         Title: title,
         Description: description,
         Completed: false,
+        User: *user,
+        UserID: user.ID,
     })
 
     var todos []models.Todo
+    
     err = db.Find(&todos).Error
     if err != nil {
         return err
     }
     return c.Render("todolist", fiber.Map{
         "Tasks": todos,
+        "User": *user,
     })
 }
 
@@ -130,7 +143,7 @@ func RegisterHandler(c *fiber.Ctx) error {
         Password: password,
     }
 
-    valid, err := user.ValidateRegister()
+    valid, err := auth.ValidateRegisterRequest(&user)
     
     if !valid && err != nil {
         log.Printf("Error : %v", err.Error())
