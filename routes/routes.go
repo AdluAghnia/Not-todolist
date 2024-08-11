@@ -12,6 +12,7 @@ func SetupRoutes(app *fiber.App) {
     app.Get("/register", handler.ViewRegister)
     app.Get("/todo", handler.ViewAddTask)
     app.Get("/login", handler.ViewLogin)
+    app.Get("/userinfo", middleware.JWTMiddleware(), handler.GetUserInformation)
 
     app.Post("/api/login", handler.LoginHandler)
     app.Post("/api/register", handler.RegisterHandler)

@@ -8,6 +8,7 @@ import (
 	"github.com/AdluAghnia/not_todolist/database"
 	"github.com/AdluAghnia/not_todolist/middleware"
 	"github.com/AdluAghnia/not_todolist/models"
+	"github.com/AdluAghnia/not_todolist/repository"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -42,6 +43,12 @@ func ViewLogin(c *fiber.Ctx) error {
 }
 
 func LoginHandler(c *fiber.Ctx) error {
+    db, err := database.Db()
+    if err != nil {
+        log.Printf("Error : %v \n", err.Error())
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
     email := c.FormValue("email")
     password := c.FormValue("password")
 
@@ -50,7 +57,7 @@ func LoginHandler(c *fiber.Ctx) error {
     }
 
     // Find User by Email
-    user, err := auth.FindUserByEmail(email)
+    user, err := repository.GetUserByEmail(db, email)
     if err != nil {
         log.Printf("Error : %v \n", err.Error())
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
@@ -64,7 +71,7 @@ func LoginHandler(c *fiber.Ctx) error {
     }
 
     // Generate JWT Token
-    token, err := middleware.GenerateJWT(&user)
+    token, err := middleware.GenerateJWT(user)
     if err != nil {
         log.Printf("Error : %v \n", err.Error())
         return c.Status(fiber.StatusInternalServerError).SendString("Couldn't generate token")
@@ -153,4 +160,14 @@ func RegisterHandler(c *fiber.Ctx) error {
     return c.Render("list", fiber.Map{
         "Users": users,
     }, "layouts/main")
+}
+
+
+func GetUserInformation(c *fiber.Ctx) error {
+    user, err := middleware.GetUserFromContext(c)
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+    return c.JSON(user)
 }
