@@ -41,5 +41,5 @@ func UserExistByEmail(db *gorm.DB, email string) (bool, error) {
         return false, err
     }
 
-    return count < 0, nil 
+    return count <= 0, nil 
 }

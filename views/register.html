@@ -1,4 +1,6 @@
-<form id="form-register" hx-post="/api/register" hx-swap="innerHTML" hx-target="#list-user">
+{{ .Error }}
+
+<form id="form-register" hx-post="/api/register" hx-swap="innerHTML" hx-target="#form-register">
     <label for="username">Username :</label>
     <input type="text" name="username" value="">
 
@@ -10,8 +12,3 @@
     
     <button type="submit">Sign up</button>
 </form>
-<p>{{ .Error }}</p>
-
-<div id="list-user">
-  
-</div>

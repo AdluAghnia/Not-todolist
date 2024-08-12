@@ -130,7 +130,9 @@ func AddTaskHandler(c *fiber.Ctx) error {
 func RegisterHandler(c *fiber.Ctx) error {
     db, err := database.Db()
     if err != nil {
-        return err
+        return c.Render("register", fiber.Map{
+            "Error": err.Error(),
+        }, "layouts/main")
     }
 
     email := c.FormValue("email")
@@ -147,7 +149,7 @@ func RegisterHandler(c *fiber.Ctx) error {
     
     if !valid && err != nil {
         log.Printf("Error : %v", err.Error())
-        return c.Render("list", fiber.Map{
+        return c.Render("register", fiber.Map{
             "Error": err.Error(),
         })
     }
@@ -155,7 +157,9 @@ func RegisterHandler(c *fiber.Ctx) error {
     hash, err := auth.HashPassword(user.Password)
 
     if err != nil {
-        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+        return c.Render("register", fiber.Map{
+            "Error": err.Error(),
+        }, "layouts/main")
     }
 
     db.Create(&models.User{
@@ -164,15 +168,12 @@ func RegisterHandler(c *fiber.Ctx) error {
         Password: hash,
     })
 
-    var users []models.User
-    err = db.Find(&users).Error
-    if err != nil {
-        return err
+    if c.Get("HX-Request") == "true" {
+        c.Set("HX-Redirect", "/login")
+        return nil
     }
 
-    return c.Render("list", fiber.Map{
-        "Users": users,
-    }, "layouts/main")
+    return c.Redirect("/login", fiber.StatusSeeOther)
 }
 
 
