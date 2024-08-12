@@ -147,7 +147,7 @@ func RegisterHandler(c *fiber.Ctx) error {
     
     if !valid && err != nil {
         log.Printf("Error : %v", err.Error())
-        return c.Render("todolist", fiber.Map{
+        return c.Render("list", fiber.Map{
             "Error": err.Error(),
         })
     }

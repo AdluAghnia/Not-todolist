@@ -3,7 +3,9 @@ package auth
 import (
 	"errors"
 
+	"github.com/AdluAghnia/not_todolist/database"
 	"github.com/AdluAghnia/not_todolist/models"
+	"github.com/AdluAghnia/not_todolist/repository"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -28,6 +30,21 @@ func ValidateRegisterRequest(u *models.User) (bool, error) {
     username := u.Username
     password := u.Password
 
+    db, err := database.Db()
+
+    if err != nil {
+        return false, err
+    }
+
+    emailExist, err := repository.UserExistByEmail(db, email)
+    if err != nil {
+        return false, err
+    }
+
+    if !emailExist {
+        return false, errors.New("email already exist")
+    }
+    
     if email == "" {
         return false, errors.New("email require")
     }
