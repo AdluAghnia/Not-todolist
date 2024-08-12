@@ -145,12 +145,11 @@ func RegisterHandler(c *fiber.Ctx) error {
         Password: password,
     }
 
-    valid, err := auth.ValidateRegisterRequest(&user)
+    valid, errMessage := auth.ValidateRegisterRequest(&user)
     
-    if !valid && err != nil {
-        log.Printf("Error : %v", err.Error())
+    if !valid {
         return c.Render("register", fiber.Map{
-            "Error": err.Error(),
+            "Errors": errMessage,
         })
     }
     

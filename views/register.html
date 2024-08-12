@@ -3,12 +3,21 @@
 <form id="form-register" hx-post="/api/register" hx-swap="innerHTML" hx-target="#form-register">
     <label for="username">Username :</label>
     <input type="text" name="username" value="">
+    {{ if .Errors.username }}
+        <p style="color:red;">{{ .Errors.username }}</p>
+    {{ end }}
 
     <label for="email">Email :</label>
     <input type="email" name="email" value="">
+    {{ if .Errors.username }}
+        <p style="color:red;">{{ .Errors.email }}</p>
+    {{ end }}
 
     <label for="password">Password :</label>
     <input type="password" name="password" value="">
-    
+    {{ if .Errors.username }}
+        <p style="color:red;">{{ .Errors.password }}</p>
+    {{ end }}
+
     <button type="submit">Sign up</button>
 </form>

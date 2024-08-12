@@ -1,8 +1,6 @@
 package auth
 
 import (
-	"errors"
-
 	"github.com/AdluAghnia/not_todolist/database"
 	"github.com/AdluAghnia/not_todolist/models"
 	"github.com/AdluAghnia/not_todolist/repository"
@@ -25,7 +23,9 @@ func ComparePasswordHash(password, hash string) (bool, error) {
     return true, nil
 }
 
-func ValidateRegisterRequest(u *models.User) (bool, error) {
+func ValidateRegisterRequest(u *models.User) (bool, map[string]string) {
+    errorMessage := make(map[string]string)
+
     email := u.Email
     username := u.Username
     password := u.Password
@@ -33,29 +33,36 @@ func ValidateRegisterRequest(u *models.User) (bool, error) {
     db, err := database.Db()
 
     if err != nil {
-        return false, err
+        errorMessage["server"] = err.Error()
+        return false, errorMessage
     }
 
     emailExist, err := repository.UserExistByEmail(db, email)
+    
+    emailValid := email != ""
+    usernameValid := username != ""
+    passwordValid := len(password) <= 6
+
     if err != nil {
-        return false, err
+        errorMessage["server"] = err.Error()
+        return false, errorMessage
     }
 
     if !emailExist {
-        return false, errors.New("email already exist")
+        errorMessage["email"] = "Email Already Taken"
     }
     
-    if email == "" {
-        return false, errors.New("email require")
+    if !emailValid {
+        errorMessage["email"] = "Email is required"
     }
 
-    if username == "" {
-        return false, errors.New("username cannot empty")
+    if !usernameValid {
+        errorMessage["username"] = "Username required"
     }
 
-    if len(password) <= 6 {
-        return false, errors.New("password should atleast have 6 characters")
+    if passwordValid {
+        errorMessage["password"] = "password should atleast have 6 characters"
     }
 
-    return true, nil
+    return emailValid && usernameValid && !passwordValid, errorMessage
 }
