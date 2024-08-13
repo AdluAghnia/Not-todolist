@@ -15,7 +15,7 @@ func GetUserByID(db *gorm.DB, id uint) (*models.User, error) {
         }
         return nil, err
     }
-    
+
     return &user, nil
 }
 
@@ -27,7 +27,7 @@ func GetUserByEmail(db *gorm.DB, email string) (*models.User, error) {
         if errors.Is(err, gorm.ErrRecordNotFound) {
             return nil, nil
         }
-        
+
         return nil, err
     }
 
@@ -41,5 +41,16 @@ func UserExistByEmail(db *gorm.DB, email string) (bool, error) {
         return false, err
     }
 
-    return count <= 0, nil 
+    return count < 0, nil 
+}
+
+func GetTodosByID(db *gorm.DB, user_id int) ([]models.Todo, error) {
+    var todos []models.Todo
+
+    err := db.Where("user_id", user_id).Find(&todos).Error
+    if err != nil {
+        return nil, err
+    }
+
+    return todos, nil
 }

@@ -115,12 +115,11 @@ func AddTaskHandler(c *fiber.Ctx) error {
         UserID: user.ID,
     })
 
-    var todos []models.Todo
-    
-    err = db.Find(&todos).Error
+    todos, err := repository.GetTodosByID(db, int(user.ID))
     if err != nil {
-        return err
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
+
     return c.Render("todolist", fiber.Map{
         "Tasks": todos,
         "User": *user,
