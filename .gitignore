@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-tmp/*
+.env
 
 # Test binary, built with `go test -c`
 *.test
@@ -23,4 +23,4 @@ go.work
 go.work.sum
 
 # databases
-test.db
+*.db
