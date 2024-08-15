@@ -103,6 +103,7 @@ func AddTaskHandler(c *fiber.Ctx) error {
     title := c.FormValue("title")
     description := c.FormValue("description")
     user, err := middleware.GetUserFromContext(c)
+ 
     if err != nil {
         return err
     }
@@ -116,13 +117,14 @@ func AddTaskHandler(c *fiber.Ctx) error {
     })
 
     todos, err := repository.GetTodosByID(db, int(user.ID))
+    timePassed := repository.GetTimeSinceCreated(todos)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
-
-    return c.Render("todolist", fiber.Map{
+    return c.Render("todoList", fiber.Map{
         "Tasks": todos,
         "User": *user,
+        "TimePassed": timePassed,
     })
 }
 
