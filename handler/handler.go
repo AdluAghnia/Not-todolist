@@ -23,9 +23,29 @@ func ViewRegister(c *fiber.Ctx) error {
 }
 
 func ViewAddTask(c *fiber.Ctx) error {
+    db, err := database.Db()
+    if err != nil {
+        return err
+    }
+
+    user, err := middleware.GetUserFromContext(c)
+    if err != nil {
+        return err
+    }
+
+    todos, err := repository.GetTodosByID(db, int(user.ID))
+    if err != nil {
+        return err
+    }
+
+    timePassed := repository.GetTimeSinceCreated(todos)
+
     return c.Render("todo", fiber.Map{
         "Title": "Task",
-    }, "layouts/main")
+        "Tasks": todos,
+        "User": *user,
+        "TimePassed": timePassed,
+    },"layouts/main")
 }
 
 func ViewLogin(c *fiber.Ctx) error {
@@ -102,8 +122,8 @@ func AddTaskHandler(c *fiber.Ctx) error {
 
     title := c.FormValue("title")
     description := c.FormValue("description")
+
     user, err := middleware.GetUserFromContext(c)
- 
     if err != nil {
         return err
     }
