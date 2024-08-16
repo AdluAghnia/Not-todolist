@@ -197,6 +197,35 @@ func RegisterHandler(c *fiber.Ctx) error {
 }
 
 
+func DeleteTodoHandler(c *fiber.Ctx) error {
+    db, err := database.Db()
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+    user, err := middleware.GetUserFromContext(c)
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+    err = db.Where("id = ?", c.Params("id")).Delete(&models.Todo{}).Error
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+   }
+
+    todos, err := repository.GetTodosByID(db, int(user.ID))
+    timePassed := repository.GetTimeSinceCreated(todos)
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
+    }
+
+    return c.Render("todoList", fiber.Map{
+        "Tasks": todos,
+        "User": *user,
+        "TimePassed": timePassed,
+    }, "layouts/main")
+}
+
 func GetUserInformation(c *fiber.Ctx) error {
     user, err := middleware.GetUserFromContext(c)
     if err != nil {

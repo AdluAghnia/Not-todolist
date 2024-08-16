@@ -18,5 +18,6 @@ func SetupRoutes(app *fiber.App) {
     app.Get("/todo", middleware.JWTMiddleware(), handler.ViewAddTask)
     app.Get("/userinfo", middleware.JWTMiddleware(), handler.GetUserInformation)
 
-   app.Post("/api/todo", middleware.JWTMiddleware(), handler.AddTaskHandler)
+    app.Post("/api/todo", middleware.JWTMiddleware(), handler.AddTaskHandler)
+    app.Delete("/todo/:id", middleware.JWTMiddleware(), handler.DeleteTodoHandler)
 }

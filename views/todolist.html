@@ -1,11 +1,16 @@
 {{ define "todoList" }}
+<div id="todo-list">
     {{ range $index, $task := .Tasks }}
     <p>
         <strong>{{ $task.Title }}</strong> - {{ $task.Description }}<br>
         <small>Created at: {{ $task.CreatedAt.Format "2006-01-02 15:04:05" }}</small><br>
         <small>Time passed: {{ index $.TimePassed $index }}</small>
+        <button hx-delete="/todo/{{$task.ID}}" hx-swap="outerHTML" hx-target="#todo-list">
+            delete
+        </button>
     </p>
     {{ else }}
     <p>No tasks available.</p>
     {{ end }}
+</div>
 {{ end }}
