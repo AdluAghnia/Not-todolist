@@ -226,6 +226,28 @@ func DeleteTodoHandler(c *fiber.Ctx) error {
     }, "layouts/main")
 }
 
+// TODO: Completed this function
+func ChangeStatusHandler(c *fiber.Ctx) error {
+    db, err := database.Db()
+    id := c.Params("id")
+    status := true
+
+    if err != nil {
+        return err
+    }
+
+    todo, err := repository.GetTodoByID(db, id)
+    db.Model(&todo).Update("completed", status)
+
+    if err != nil {
+        return err
+    }
+    
+    return c.Render("todoList", fiber.Map{
+        "ID": id,
+    }, "layouts/main")
+}
+
 func GetUserInformation(c *fiber.Ctx) error {
     user, err := middleware.GetUserFromContext(c)
     if err != nil {
