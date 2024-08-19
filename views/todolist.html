@@ -1,25 +1,22 @@
 {{ define "todoList" }}
 <div id="todo-list">
-    {{ range $index, $task := .Tasks }}
+    {{ range $task := .Tasks }}
     <div id="todo-{{ $task.ID}}">
-        <strong>{{ $task.Title }}</strong> - {{ $task.Description }}<br>
-        <small>Created at: {{ $task.CreatedAt.Format "2006-01-02 15:04:05" }}</small><br>
-        <small>Time passed: {{ index $.TimePassed $index }}</small>
-        </br>
+        <strong>{{ $task.Title }}</strong>
+        <p>{{ $task.Description }}</p>
         <button hx-get="/todo/{{ $task.ID }}/update" hx-swap="outerHTML">update</button>
         <button hx-delete="/todo/{{$task.ID}}" hx-swap="outerHTML" hx-target="#todo-list">
             delete
         </button>       
     </div>
-
     {{ else }}
-    <p>No tasks available.</p>
-    {{ end }}
+    <p>No tasks available.</p> 
+    {{ end }} 
 </div>
 {{ end }}
 
 {{ define "updateForm" }}
-<form hx-update="/todo/{{ .Task.ID }}" hx-swap="outerHTML" hx-target="#todo-list">
+<form hx-put="/todo/{{ .Task.ID }}/update" hx-swap="innerHTML" hx-target="#todo-{{ .Task.ID }}">
     <label for="title">Title</label>
     <input type="text" name="title" value="{{ .Task.Title }}">
     <label for="title">Description</label>
@@ -29,5 +26,4 @@
 
     <button type="submit"> SUBMIT </button>
 </form>
-
 {{ end }}
