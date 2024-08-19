@@ -226,25 +226,53 @@ func DeleteTodoHandler(c *fiber.Ctx) error {
     }, "layouts/main")
 }
 
-// TODO: Completed this function
-func ChangeStatusHandler(c *fiber.Ctx) error {
+func UpdateTodoViewHandler(c *fiber.Ctx) error {
     db, err := database.Db()
-    id := c.Params("id")
-    status := true
+    if err != nil {
+        return err
+    }
+    todo, err := repository.GetTodoByID(db, c.Params("id"))
+    if err != nil {
+        return err
+    }
+    return c.Render("updateForm", fiber.Map{
+        "Task": todo,
+    }, "layouts/main")
+}
+
+// TODO: Completed this function
+func UpdateTodoHandler(c *fiber.Ctx) error {
+    db, err := database.Db()
 
     if err != nil {
         return err
     }
 
-    todo, err := repository.GetTodoByID(db, id)
-    db.Model(&todo).Update("completed", status)
+    id := c.Params("id")
+    user, err := middleware.GetUserFromContext(c)
+    if err != nil {
+        return err
+    }
 
+    title := c.FormValue("title")
+    description := c.FormValue("description")
+    todo, err := repository.GetTodoByID(db, id)
+    if err != nil {
+        return err
+    }
+
+    todo.Title = title
+    todo.Description = description
+
+    db.Save(&todo)
+
+    todos, err := repository.GetTodosByID(db, int(user.ID))
     if err != nil {
         return err
     }
     
     return c.Render("todoList", fiber.Map{
-        "ID": id,
+        "Tasks": todos,
     }, "layouts/main")
 }
 
