@@ -15,7 +15,7 @@ func SetupRoutes(app *fiber.App) {
     app.Get("/logout", handler.LogoutHandler) 
 
     app.Get("/",middleware.JWTMiddleware() , handler.IndexHandler)
-    app.Get("/todo", middleware.JWTMiddleware(), handler.ViewAddTask)
+    app.Get("/todo", middleware.JWTMiddleware(), handler.IndexTodoHandler)
     app.Get("/todo/:id", middleware.JWTMiddleware(), handler.GetTodoHandler)
     app.Get("/todo/:id/update", middleware.JWTMiddleware(), handler.UpdateTodoViewHandler)
     app.Get("/userinfo", middleware.JWTMiddleware(), handler.GetUserInformation)

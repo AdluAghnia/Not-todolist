@@ -8,8 +8,7 @@ import (
 	"github.com/AdluAghnia/not_todolist/repository"
 	"github.com/gofiber/fiber/v2"
 )
-
-func ViewAddTask(c *fiber.Ctx) error {
+func IndexTodoHandler(c *fiber.Ctx) error  {
     db, err := database.Db()
     if err != nil {
         return err
@@ -20,19 +19,18 @@ func ViewAddTask(c *fiber.Ctx) error {
         return err
     }
 
-    todos, err := repository.GetTodosByUserID(db, user.ID)
+    tasks, err := repository.GetTodosByUserID(db, user.ID)
     if err != nil {
         return err
     }
 
-    timePassed := repository.GetTimeSinceCreated(todos)
+    return c.Render("index-todo", fiber.Map{
+        "Tasks": tasks,
+    }, "layouts/main")
+}
 
-    return c.Render("todo-form", fiber.Map{
-        "Title": "Task",
-        "Tasks": todos,
-        "User": *user,
-        "TimePassed": timePassed,
-    },"layouts/main")
+func ViewAddTask(c *fiber.Ctx) error {
+    return c.Render("todo-form", nil,"layouts/main")
 }
 
 func AddTaskHandler(c *fiber.Ctx) error {
@@ -120,9 +118,7 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
         return err
     }
 
-    return c.Render("todo", fiber.Map{
-        "Task": todo,
-    }, "layouts/main")
+    return c.Render("todo", todo, "layouts/main")
 }
 
 

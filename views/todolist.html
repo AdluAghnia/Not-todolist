@@ -1,3 +1,9 @@
+{{ define "index-todo" }}
+    {{ template "todo-form" }}
+    <hr/>
+    {{ template "todoList" .Tasks}}
+{{ end }}
+
 {{ define "todo-form" }}
 <form hx-post="/api/todo" hx-swap="innerHTML" hx-target="#todo-list">
   <label for="title">Title</label>
@@ -7,26 +13,13 @@
 
   <button type="submit"> SUBMIT </button>
 </form>
-
-<div id="todo-list">
-    {{ template "todoList" . }}
-</div>
 {{ end }}
 
 {{ define "todoList" }}
 <div id="todo-list">
-    {{ range $task := .Tasks }}
-    <div id="todo-{{ $task.ID}}">
-        <strong>{{ $task.Title }}</strong>
-        <p>{{ $task.Description }}</p>
-        <button hx-get="/todo/{{ $task.ID }}/update" hx-swap="outerHTML">update</button>
-        <button hx-delete="/todo/{{$task.ID}}" hx-swap="outerHTML" hx-target="#todo-list">
-            delete
-        </button>       
-    </div>
-    {{ else }}
-    <p>No tasks available.</p> 
-    {{ end }} 
+    {{ range . }}
+        {{ template "todo" . }}
+    {{ end }}
 </div>
 {{ end }}
 
@@ -44,8 +37,12 @@
 {{ end }}
 
 {{ define "todo" }}
-    <p>{{ .Task.Title }}</p>
-    <p>{{ .Task.Description }}</p>
+<div id="todo-{{ .ID }}">
+    <p>{{ .Title }}</p>
+    <p>{{ .Description }}</p>
+    <button hx-get="/todo/{{ .ID }}/update" hx-swap="innerHTML" hx-target="#todo-{{ .ID }}">edit</button>
+    <button hx-delete="/todo/{{ .ID }}/delete" hx-swap="outerHTML" hx-target="#todo-{{ .ID }}">delete</button>
+</div>
 {{ end }}
 
 {{ define "obb-todo" }}
