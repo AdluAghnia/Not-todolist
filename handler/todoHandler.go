@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"log"
 
 	"github.com/AdluAghnia/not_todolist/database"
 	"github.com/AdluAghnia/not_todolist/middleware"
@@ -21,7 +20,7 @@ func ViewAddTask(c *fiber.Ctx) error {
         return err
     }
 
-    todos, err := repository.GetTodosByID(db, int(user.ID))
+    todos, err := repository.GetTodosByUserID(db, user.ID)
     if err != nil {
         return err
     }
@@ -59,7 +58,7 @@ func AddTaskHandler(c *fiber.Ctx) error {
         UserID: user.ID,
     })
 
-    todos, err := repository.GetTodosByID(db, int(user.ID))
+    todos, err := repository.GetTodosByUserID(db, user.ID)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
@@ -77,6 +76,7 @@ func UpdateTodoViewHandler(c *fiber.Ctx) error {
     if err != nil {
         return err
     }
+
     todo, err := repository.GetTodoByID(db, c.Params("id"))
     if err != nil {
         return err
@@ -96,11 +96,6 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
     }
 
     id := c.Params("id")
-    user, err := middleware.GetUserFromContext(c)
-    if err != nil {
-        return err
-    }
-
     todo, err := repository.GetTodoByID(db, id)
     if err != nil {
         return err
@@ -115,14 +110,16 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
         todo.Completed = false
     }
 
+
     if err := db.Save(&todo).Error; err != nil {
         return err
     }
-    todo, err = repository.GetTodoByID(db, string(user.ID))
+    
+    todo, err = repository.GetTodoByID(db, id)
     if err != nil {
         return err
     }
-    
+
     return c.Render("todo", fiber.Map{
         "Task": todo,
     }, "layouts/main")
@@ -146,7 +143,7 @@ func DeleteTodoHandler(c *fiber.Ctx) error {
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
    }
 
-    todos, err := repository.GetTodosByID(db, int(user.ID))
+    todos, err := repository.GetTodosByUserID(db, user.ID)
     timePassed := repository.GetTimeSinceCreated(todos)
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
@@ -158,5 +155,4 @@ func DeleteTodoHandler(c *fiber.Ctx) error {
         "TimePassed": timePassed,
     }, "layouts/main")
 }
-
 

@@ -46,7 +46,7 @@ func UserExistByEmail(db *gorm.DB, email string) (bool, error) {
     return count < 0, nil 
 }
 
-func GetTodosByID(db *gorm.DB, user_id int) ([]models.Todo, error) {
+func GetTodosByUserID(db *gorm.DB, user_id uint) ([]models.Todo, error) {
     var todos []models.Todo
 
     err := db.Where("user_id", user_id).Find(&todos).Error
