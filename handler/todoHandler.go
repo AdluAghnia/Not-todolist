@@ -95,7 +95,6 @@ func UpdateTodoViewHandler(c *fiber.Ctx) error {
     }, "layouts/main")
 }
 
-// TODO: Completed this function
 func UpdateTodoHandler(c *fiber.Ctx) error {
     db, err := database.Db()
 
@@ -132,33 +131,20 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
 }
 
 
-
+// TODO : Complete Delete Handler
 func DeleteTodoHandler(c *fiber.Ctx) error {
     db, err := database.Db()
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
 
-    user, err := middleware.GetUserFromContext(c)
+    id := c.Params("id")
+
+    err = db.Where("id = ?", id).Delete(&models.Todo{}).Error
     if err != nil {
         return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
 
-    err = db.Where("id = ?", c.Params("id")).Delete(&models.Todo{}).Error
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
-   }
-
-    todos, err := repository.GetTodosByUserID(db, user.ID)
-    timePassed := repository.GetTimeSinceCreated(todos)
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
-    }
-
-    return c.Render("todoList", fiber.Map{
-        "Tasks": todos,
-        "User": *user,
-        "TimePassed": timePassed,
-    }, "layouts/main")
+    return c.Send(nil)
 }
 

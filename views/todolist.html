@@ -41,12 +41,6 @@
     <p>{{ .Title }}</p>
     <p>{{ .Description }}</p>
     <button hx-get="/todo/{{ .ID }}/update" hx-swap="innerHTML" hx-target="#todo-{{ .ID }}">edit</button>
-    <button hx-delete="/todo/{{ .ID }}/delete" hx-swap="outerHTML" hx-target="#todo-{{ .ID }}">delete</button>
-</div>
-{{ end }}
-
-{{ define "oob-todo" }}
-<div hx-swap-oob="afterbegin" id="todo-list">
-    {{ template "todo" .}}
+    <button hx-delete="/todo/{{ .ID }}" hx-swap="outerHTML" hx-target="#todo-{{ .ID }}">delete</button>
 </div>
 {{ end }}
