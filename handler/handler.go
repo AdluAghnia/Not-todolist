@@ -16,6 +16,22 @@ func IndexHandler(c *fiber.Ctx) error {
     return c.SendString("Hello")
 }
 
+func GetTodoHandler(c *fiber.Ctx) error {
+    db, err := database.Db()
+    if err != nil {
+        return err
+    }
+
+    task, err := repository.GetTodoByID(db, c.Params("id"))
+    if err != nil {
+        return err
+    }
+
+    return c.Render("todo", fiber.Map{
+        "Task": task,
+    }, "layouts/main")
+}
+
 func ViewRegister(c *fiber.Ctx) error {
     return c.Render("register", fiber.Map{
         "Title": "Register",

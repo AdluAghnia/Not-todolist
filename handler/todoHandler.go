@@ -28,7 +28,7 @@ func ViewAddTask(c *fiber.Ctx) error {
 
     timePassed := repository.GetTimeSinceCreated(todos)
 
-    return c.Render("todo", fiber.Map{
+    return c.Render("todo-form", fiber.Map{
         "Title": "Task",
         "Tasks": todos,
         "User": *user,
@@ -109,9 +109,6 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
     todo.Description = c.FormValue("description")
     status := c.FormValue("status")
 
-    log.Println(c.FormValue("title"))
-    log.Println(c.FormValue("title"))
-
     if status == "done" {
         todo.Completed = true
     } else {
@@ -121,14 +118,13 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
     if err := db.Save(&todo).Error; err != nil {
         return err
     }
-
-    todos, err := repository.GetTodosByID(db, int(user.ID))
+    todo, err = repository.GetTodoByID(db, string(user.ID))
     if err != nil {
         return err
     }
     
-    return c.Render("todoList", fiber.Map{
-        "Tasks": todos,
+    return c.Render("todo", fiber.Map{
+        "Task": todo,
     }, "layouts/main")
 }
 

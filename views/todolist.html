@@ -1,3 +1,18 @@
+{{ define "todo-form" }}
+<form hx-post="/api/todo" hx-swap="innerHTML" hx-target="#todo-list">
+  <label for="title">Title</label>
+  <input type="text" name="title" value="">
+  <label for="title">Description</label>
+  <input type="text" name="description" value="">
+
+  <button type="submit"> SUBMIT </button>
+</form>
+
+<div id="todo-list">
+    {{ template "todoList" . }}
+</div>
+{{ end }}
+
 {{ define "todoList" }}
 <div id="todo-list">
     {{ range $task := .Tasks }}
@@ -23,7 +38,17 @@
     <input type="text" name="description" value="{{ .Task.Description }}">
     <label for="status">Status</label>
     <input type="checkbox" name="status" value="done">
-
-    <button type="submit"> SUBMIT </button>
+    <button type="submit"> submit </button>
+    <button hx-get="/todo/{{ .Task.ID }}" hx-swap="outerHTML" hx-target="#todo-{{ .Task.ID }}"> Cancel </button>
 </form>
+{{ end }}
+
+{{ define "todo" }}
+    <p>{{ .Task.Title }}</p>
+    <p>{{ .Task.Description }}</p>
+<p>jsdbvjsdb</p>
+{{ end }}
+
+{{ define "obb-todo" }}
+    {{ template "todo" }}
 {{ end }}
