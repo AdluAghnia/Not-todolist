@@ -29,6 +29,22 @@ func IndexTodoHandler(c *fiber.Ctx) error  {
     }, "layouts/main")
 }
 
+func GetTodoHandler(c *fiber.Ctx) error {
+    db, err := database.Db()
+    if err != nil {
+        return err
+    }
+
+    task, err := repository.GetTodoByID(db, c.Params("id"))
+    if err != nil {
+        return err
+    }
+
+    return c.Render("todo", fiber.Map{
+        "Task": task,
+    }, "layouts/main")
+}
+
 func ViewAddTask(c *fiber.Ctx) error {
     return c.Render("todo-form", nil,"layouts/main")
 }
@@ -47,26 +63,20 @@ func AddTaskHandler(c *fiber.Ctx) error {
     if err != nil {
         return err
     }
-
-    db.Create(&models.Todo{
+    todo := &models.Todo{
         Title: title,
         Description: description,
         Completed: false,
         User: *user,
         UserID: user.ID,
-    })
-
-    todos, err := repository.GetTodosByUserID(db, user.ID)
-    if err != nil {
-        return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
     }
 
-    timePassed := repository.GetTimeSinceCreated(todos)
-    return c.Render("todoList", fiber.Map{
-        "Tasks": todos,
-        "User": *user,
-        "TimePassed": timePassed,
-    })
+    err = db.Create(todo).Error
+    if err != nil {
+        return err
+    }
+
+    return c.Render("todo", todo, "layouts/main")
 }
 
 func UpdateTodoViewHandler(c *fiber.Ctx) error {
