@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 
 	"github.com/AdluAghnia/not_todolist/database"
 	"github.com/AdluAghnia/not_todolist/middleware"
@@ -8,6 +9,7 @@ import (
 	"github.com/AdluAghnia/not_todolist/repository"
 	"github.com/gofiber/fiber/v2"
 )
+
 func IndexTodoHandler(c *fiber.Ctx) error  {
     db, err := database.Db()
     if err != nil {
@@ -22,6 +24,11 @@ func IndexTodoHandler(c *fiber.Ctx) error  {
     tasks, err := repository.GetTodosByUserID(db, user.ID)
     if err != nil {
         return err
+    }
+
+    if err := repository.UpdateTimeSinceCreated( db, tasks); err != nil {
+        log.Println(err.Error())
+        return err 
     }
 
     return c.Render("index-todo", fiber.Map{
@@ -69,6 +76,7 @@ func AddTaskHandler(c *fiber.Ctx) error {
         Completed: false,
         User: *user,
         UserID: user.ID,
+        TimeSinceCreated: "New Task!",
     }
 
     err = db.Create(todo).Error
@@ -113,6 +121,7 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
 
     if status == "done" {
         todo.Completed = true
+        todo.TimeSinceCreated = "failed"
     } else {
         todo.Completed = false
     }

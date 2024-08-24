@@ -69,9 +69,8 @@ func GetTodoByID(db *gorm.DB, id string) (*models.Todo, error) {
     return &todo, err
 }
 
-func GetTimeSinceCreated(todos []models.Todo) []string {
-    var timePassed []string
-
+// Upadating time since created for slice of todos
+func UpdateTimeSinceCreated(db *gorm.DB ,todos []models.Todo) error {
     for _, todo := range todos {
         if !todo.Completed {
             // Get time since CreatedAt
@@ -84,12 +83,36 @@ func GetTimeSinceCreated(todos []models.Todo) []string {
             seconds := int(duration.Seconds()) % 60
             timeSince := fmt.Sprintf("%d days, %d hours, %d minutes, %d seconds ago", days, hours, minutes, seconds)
 
-            timePassed = append(timePassed, timeSince)
+            todo.TimeSinceCreated = timeSince
+        } else {
+            todo.TimeSinceCreated = "failed"
         }
 
-        timePassed = append(timePassed, "Failed")
+        err := db.Save(&todo).Error
+        if err != nil {
+            return err
+        }
     }
 
-    return timePassed
+    return nil
 }
 
+func GetTimeSinceCreated(todo *models.Todo) string {
+    if !todo.Completed {
+        // Get time since CreatedAt
+        duration := time.Since(todo.CreatedAt)
+
+        // Format the duration to be more human-readable
+        hours := int(duration.Hours()) % 24
+        days := int(duration.Hours()) / 24
+        minutes := int(duration.Minutes()) % 60
+        seconds := int(duration.Seconds()) % 60
+        timeSince := fmt.Sprintf("%d days, %d hours, %d minutes, %d seconds ago", days, hours, minutes, seconds)
+
+        todo.TimeSinceCreated = timeSince
+    } else {
+        todo.TimeSinceCreated = "failed"
+    }
+
+    return todo.TimeSinceCreated
+}

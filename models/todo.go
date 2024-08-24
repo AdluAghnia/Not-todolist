@@ -11,4 +11,5 @@ type Todo struct {
     Completed   bool
     UserID      uint // foreign key referencing the User model
     User        User // belongs to relationship
+    TimeSinceCreated string
 }
