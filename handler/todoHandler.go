@@ -42,18 +42,16 @@ func GetTodoHandler(c *fiber.Ctx) error {
         return err
     }
 
-    task, err := repository.GetTodoByID(db, c.Params("id"))
+    todo, err := repository.GetTodoByID(db, c.Params("id"))
     if err != nil {
         return err
     }
 
-    return c.Render("todo", fiber.Map{
-        "Task": task,
-    }, "layouts/main")
+    return c.Render("todo", todo)
 }
 
 func ViewAddTask(c *fiber.Ctx) error {
-    return c.Render("todo-form", nil,"layouts/main")
+    return c.Render("todo-form", nil)
 }
 
 func AddTaskHandler(c *fiber.Ctx) error {
@@ -70,6 +68,7 @@ func AddTaskHandler(c *fiber.Ctx) error {
     if err != nil {
         return err
     }
+
     todo := &models.Todo{
         Title: title,
         Description: description,
@@ -84,7 +83,7 @@ func AddTaskHandler(c *fiber.Ctx) error {
         return err
     }
 
-    return c.Render("todo", todo, "layouts/main")
+    return c.Render("todo", todo)
 }
 
 func UpdateTodoViewHandler(c *fiber.Ctx) error {
@@ -100,7 +99,7 @@ func UpdateTodoViewHandler(c *fiber.Ctx) error {
 
     return c.Render("updateForm", fiber.Map{
         "Task": todo,
-    }, "layouts/main")
+    })
 }
 
 func UpdateTodoHandler(c *fiber.Ctx) error {
@@ -130,13 +129,13 @@ func UpdateTodoHandler(c *fiber.Ctx) error {
     if err := db.Save(&todo).Error; err != nil {
         return err
     }
-    
+
     todo, err = repository.GetTodoByID(db, id)
     if err != nil {
         return err
     }
 
-    return c.Render("todo", todo, "layouts/main")
+    return c.Render("todo", todo)
 }
 
 
