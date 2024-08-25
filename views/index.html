@@ -1,0 +1,76 @@
+<div class="hero bg-base-200 min-h-screen">
+  <div class="hero-content flex-col lg:flex-row-reverse">
+    <div class="text-center lg:text-left">
+      <h1 class="text-5xl font-bold">Welcome To Not TODO List!</h1>
+      <p class="py-6">
+        Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda excepturi exercitationem
+        quasi. In deleniti eaque aut repudiandae et a id nisi.
+      </p>
+    </div>
+    <div class="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
+        {{ template "login-form" }}
+    </div>
+  </div>
+</div>
+
+{{ define "login-form" }}
+<form id="auth" action="/api/login" method="post" class="card-body">
+    <div class="form-control">
+        <label class="label">
+        <span class="label-text">Email</span>
+        </label>
+        <input name="email" type="email" placeholder="email" class="input input-bordered" required />
+    </div>
+    <div class="form-control">
+        <label class="label">
+        <span class="label-text">Password</span>
+        </label>
+        <input name="password" type="password" placeholder="password" class="input input-bordered" required />
+        <label class="label">
+        <a hx-get="/register" hx-swap="outerHTML" hx-target="#auth" class="label-text-alt link link-hover">Create Account</a>
+        </label>
+    </div>
+    <div class="form-control mt-6">
+        <button class="btn btn-primary">Login</button>
+    </div>
+</form>
+{{ end }}
+
+{{ define "register-form" }}
+<form id="auth" action="/api/register" method="post" class="card-body">
+    <div class="form-control">
+        <label class="label">
+            <span class="label-text">Username</span>
+        </label>
+        <input name="username" type="text" placeholder="username" class="input input-bordered" required />
+    </div>
+
+    <div class="form-control">
+        <label class="label">
+            <span class="label-text">Email</span>
+        </label>
+        <input name="username" type="email" placeholder="email" class="input input-bordered" required />
+    </div>
+
+    <div class="form-control">
+        <label class="label">
+        <span class="label-text">Password</span>
+        </label>
+        <input name="password" type="password" placeholder="password" class="input input-bordered" required />
+    </div>
+
+    <div class="form-control">
+        <label class="label">
+        <span class="label-text">Password</span>
+        </label>
+        <input name="confirm-password" type="password" placeholder="password" class="input input-bordered" required />
+        <label class="label">
+        <a hx-get="/login" hx-swap="outerHTML" hx-target="#auth" class="label-text-alt link link-hover">Already Have Account</a>
+        </label>
+    </div>
+
+    <div class="form-control mt-6">
+        <button class="btn btn-primary">Login</button>
+    </div>
+</form>
+{{ end }}

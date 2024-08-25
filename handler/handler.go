@@ -13,19 +13,19 @@ import (
 )
 
 func IndexHandler(c *fiber.Ctx) error {
-    return c.SendString("Hello")
+    return c.Render("index", nil, "layouts/main")
 }
 
 func ViewRegister(c *fiber.Ctx) error {
-    return c.Render("register", fiber.Map{
+    return c.Render("register-form", fiber.Map{
         "Title": "Register",
-    }, "layouts/main")
+    })
 }
 
 func ViewLogin(c *fiber.Ctx) error {
-    return c.Render("login", fiber.Map{
+    return c.Render("login-form", fiber.Map{
         "Title": "Login",
-    }, "layouts/main")
+    })
 }
 
 func LoginHandler(c *fiber.Ctx) error {
@@ -69,10 +69,8 @@ func LoginHandler(c *fiber.Ctx) error {
         Value: token,
         Expires: time.Now().Add(24 * time.Hour),
     })
-
-    return c.Render("userinfo", fiber.Map{
-        "User": user,
-    }, "layouts/main")
+    
+    return c.Redirect("/todo", fiber.StatusSeeOther)
 }
 
 func LogoutHandler(c *fiber.Ctx) error {
