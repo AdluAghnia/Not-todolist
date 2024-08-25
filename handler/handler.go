@@ -13,7 +13,12 @@ import (
 )
 
 func IndexHandler(c *fiber.Ctx) error {
-    return c.Render("index", nil, "layouts/main")
+    jwtCookie := c.Cookies("jwt")
+    jwtExists := jwtCookie != ""
+    
+    return c.Render("index", fiber.Map{
+        "Login": jwtExists,
+    }, "layouts/main")
 }
 
 func ViewRegister(c *fiber.Ctx) error {
