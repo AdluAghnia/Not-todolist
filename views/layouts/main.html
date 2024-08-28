@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ .Title }}</title>
-    </head>
-    <body>
 
-        {{ template "navbar" }}
-        <div class="container mx-auto px-4">
-            {{ embed }}  
-        </div>
-        
-        <script src="https://unpkg.com/htmx.org@2.0.1"></script>
-        <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.tailwindcss.com"></script>
-    </body>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{{ .Title }}</title>
+</head>
+
+<body>
+
+	{{ template "navbar" }}
+	<div class="container mx-auto px-4">
+		{{ embed }}
+	</div>
+	<script src="https://unpkg.com/htmx.org@2.0.1"></script>
+	<link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+	<script src="https://cdn.tailwindcss.com"></script>
+</body>
+
 </html>
 
 {{ define "navbar" }}
 <div class="navbar bg-primary text-primary-content">
-    <p class="text-xl">NotTODO</p>
+	<p class="text-xl">NotTODO</p>
 </div>
 {{ end }}

@@ -10,109 +10,109 @@ import (
 )
 
 func GetUserByID(db *gorm.DB, id uint) (*models.User, error) {
-    var user models.User
-    if err := db.First(&user, id).Error; err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return nil, nil
-        }
-        return nil, err
-    }
+	var user models.User
+	if err := db.First(&user, id).Error; err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
+		return nil, err
+	}
 
-    return &user, nil
+	return &user, nil
 }
 
 func GetUserByEmail(db *gorm.DB, email string) (*models.User, error) {
-    var user models.User
+	var user models.User
 
-    err:= db.Where("email = ?", email).First(&user).Error
-    if err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return nil, nil
-        }
+	err := db.Where("email = ?", email).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, nil
+		}
 
-        return nil, err
-    }
+		return nil, err
+	}
 
-    return &user, err
+	return &user, err
 }
 
 func UserExistByEmail(db *gorm.DB, email string) (bool, error) {
-    var count int64
+	var count int64
 
-    if err := db.Model(&models.User{}).Where("email = ?", email).Count(&count).Error; err != nil {
-        return false, err
-    }
+	if err := db.Model(&models.User{}).Where("email = ?", email).Count(&count).Error; err != nil {
+		return false, err
+	}
 
-    return count < 0, nil 
+	return count < 0, nil
 }
 
 func GetTodosByUserID(db *gorm.DB, user_id uint) ([]models.Todo, error) {
-    var todos []models.Todo
+	var todos []models.Todo
 
-    err := db.Where("user_id", user_id).Find(&todos).Error
-    if err != nil {
-        return nil, err
-    }
+	err := db.Where("user_id", user_id).Find(&todos).Error
+	if err != nil {
+		return nil, err
+	}
 
-    return todos, nil
+	return todos, nil
 }
 
 func GetTodoByID(db *gorm.DB, id string) (*models.Todo, error) {
-    var todo models.Todo
+	var todo models.Todo
 
-    err:= db.Where("id = ?", id).First(&todo).Error
+	err := db.Where("id = ?", id).First(&todo).Error
 
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 
-    return &todo, err
+	return &todo, err
 }
 
 // Upadating time since created for slice of todos
-func UpdateTimeSinceCreated(db *gorm.DB ,todos []models.Todo) error {
-    for _, todo := range todos {
-        if !todo.Completed {
-            // Get time since CreatedAt
-            duration := time.Since(todo.CreatedAt)
+func UpdateTimeSinceCreated(db *gorm.DB, todos []models.Todo) error {
+	for _, todo := range todos {
+		if !todo.Completed {
+			// Get time since CreatedAt
+			duration := time.Since(todo.CreatedAt)
 
-            // Format the duration to be more human-readable
-            hours := int(duration.Hours()) % 24
-            days := int(duration.Hours()) / 24
-            minutes := int(duration.Minutes()) % 60
-            seconds := int(duration.Seconds()) % 60
-            timeSince := fmt.Sprintf("%d days, %d hours, %d minutes, %d seconds ago", days, hours, minutes, seconds)
+			// Format the duration to be more human-readable
+			hours := int(duration.Hours()) % 24
+			days := int(duration.Hours()) / 24
+			minutes := int(duration.Minutes()) % 60
+			seconds := int(duration.Seconds()) % 60
+			timeSince := fmt.Sprintf("%d days, %d hours, %d minutes, %d seconds ago", days, hours, minutes, seconds)
 
-            todo.TimeSinceCreated = timeSince
-        } else {
-            todo.TimeSinceCreated = "failed"
-        }
+			todo.TimeSinceCreated = timeSince
+		} else {
+			todo.TimeSinceCreated = "failed"
+		}
 
-        err := db.Save(&todo).Error
-        if err != nil {
-            return err
-        }
-    }
+		err := db.Save(&todo).Error
+		if err != nil {
+			return err
+		}
+	}
 
-    return nil
+	return nil
 }
 
 func GetTimeSinceCreated(todo *models.Todo) string {
-    if !todo.Completed {
-        // Get time since CreatedAt
-        duration := time.Since(todo.CreatedAt)
+	if !todo.Completed {
+		// Get time since CreatedAt
+		duration := time.Since(todo.CreatedAt)
 
-        // Format the duration to be more human-readable
-        hours := int(duration.Hours()) % 24
-        days := int(duration.Hours()) / 24
-        minutes := int(duration.Minutes()) % 60
-        seconds := int(duration.Seconds()) % 60
-        timeSince := fmt.Sprintf("%d days, %d hours, %d minutes, %d seconds ago", days, hours, minutes, seconds)
+		// Format the duration to be more human-readable
+		hours := int(duration.Hours()) % 24
+		days := int(duration.Hours()) / 24
+		minutes := int(duration.Minutes()) % 60
+		seconds := int(duration.Seconds()) % 60
+		timeSince := fmt.Sprintf("%d days, %d hours, %d minutes, %d seconds ago", days, hours, minutes, seconds)
 
-        todo.TimeSinceCreated = timeSince
-    } else {
-        todo.TimeSinceCreated = "failed"
-    }
+		todo.TimeSinceCreated = timeSince
+	} else {
+		todo.TimeSinceCreated = "failed"
+	}
 
-    return todo.TimeSinceCreated
+	return todo.TimeSinceCreated
 }

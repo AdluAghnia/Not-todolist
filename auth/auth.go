@@ -8,61 +8,61 @@ import (
 )
 
 func HashPassword(password string) (string, error) {
-    bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-    if err != nil {
-        return "", err
-    }
-    return string(bytes), nil
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return "", err
+	}
+	return string(bytes), nil
 }
 
 func ComparePasswordHash(password, hash string) (bool, error) {
-    err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-    if err != nil {
-        return false, err
-    }
-    return true, nil
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	if err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func ValidateRegisterRequest(u *models.User) (bool, map[string]string) {
-    errorMessage := make(map[string]string)
+	errorMessage := make(map[string]string)
 
-    email := u.Email
-    username := u.Username
-    password := u.Password
+	email := u.Email
+	username := u.Username
+	password := u.Password
 
-    db, err := database.Db()
+	db, err := database.Db()
 
-    if err != nil {
-        errorMessage["server"] = err.Error()
-        return false, errorMessage
-    }
+	if err != nil {
+		errorMessage["server"] = err.Error()
+		return false, errorMessage
+	}
 
-    emailExist, err := repository.UserExistByEmail(db, email)
-    
-    emailValid := email != ""
-    usernameValid := username != ""
-    passwordValid := len(password) <= 6
+	emailExist, err := repository.UserExistByEmail(db, email)
 
-    if err != nil {
-        errorMessage["server"] = err.Error()
-        return false, errorMessage
-    }
+	emailValid := email != ""
+	usernameValid := username != ""
+	passwordValid := len(password) <= 6
 
-    if !emailExist {
-        errorMessage["email"] = "Email Already Taken"
-    }
-    
-    if !emailValid {
-        errorMessage["email"] = "Email is required"
-    }
+	if err != nil {
+		errorMessage["server"] = err.Error()
+		return false, errorMessage
+	}
 
-    if !usernameValid {
-        errorMessage["username"] = "Username required"
-    }
+	if !emailExist {
+		errorMessage["email"] = "Email Already Taken"
+	}
 
-    if passwordValid {
-        errorMessage["password"] = "password should atleast have 6 characters"
-    }
+	if !emailValid {
+		errorMessage["email"] = "Email is required"
+	}
 
-    return emailValid && usernameValid && !passwordValid, errorMessage
+	if !usernameValid {
+		errorMessage["username"] = "Username required"
+	}
+
+	if passwordValid {
+		errorMessage["password"] = "password should atleast have 6 characters"
+	}
+
+	return emailValid && usernameValid && !passwordValid, errorMessage
 }

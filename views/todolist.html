@@ -1,65 +1,63 @@
 {{ define "index-todo" }}
 <div class="grid grid-cols-2 md-5">
-    {{ template "todo-form" }}
-    {{ template "todoList" .Tasks}}
+	{{ template "todo-form" }}
+	{{ template "todoList" .Tasks}}
 </div>
 {{ end }}
 
 {{ define "todo-form" }}
 <form class="form-control mt-5" hx-post="/api/todo" hx-swap="beforeend" hx-target="#todo-list">
-    <span class="label-text">Todo Title : </span>
-    <input
-    name="title"
-    type="text"
-    placeholder="Title ..."
-    class="input input-bordered input-primary w-full max-w-xs mb-2" />
-    <span class="label-text">Todo Description : </span>
-    <textarea name="description" class="mb-2 textarea textarea-primary" placeholder="Description ..."></textarea>
-    <button class="btn btn-primary" type="submit"> SUBMIT </button>
+	<span class="label-text">Todo Title : </span>
+	<input name="title" type="text" placeholder="Title ..."
+		class="input input-bordered input-primary w-full max-w-xs mb-2" />
+	<span class="label-text">Todo Description : </span>
+	<textarea name="description" class="mb-2 textarea textarea-primary" placeholder="Description ..."></textarea>
+	<button class="btn btn-primary" type="submit"> SUBMIT </button>
 </form>
 {{ end }}
 
 {{ define "todoList" }}
 <div class="mx-5 mt-5" id="todo-list">
-    {{ range . }}
-        {{ template "todo" . }}
-    {{ end }}
+	{{ range . }}
+	{{ template "todo" . }}
+	{{ end }}
 </div>
 {{ end }}
 
 {{ define "updateForm" }}
 <form hx-put="/todo/{{ .Task.ID }}/update" hx-swap="innerHTML" hx-target="#todo-{{ .Task.ID }}" class="form-control">
-    <span class="label-text">Todo Title : </span>
-    <input
-    name="title"
-    type="text"
-    placeholder="Title ..."
-    value="{{ .Task.Title }}"
-    class="input input-bordered input-primary w-full max-w-xs mb-2" />
-    <span class="label-text">Todo Description : </span>
-    <textarea name="description" class="mb-2 textarea textarea-primary" value="{{ .Task.Description }}" placeholder="Description ..."></textarea>
-   
-    <label class="label cursor-pointer">
-        <span class="label-text">Mark As Failed</span>
-        <input name="status" value="done" type="checkbox" {{if .Task.Completed}} checked="checked" {{ end }} class="checkbox checkbox-primary" />
-    </label>
-    <button class="btn btn-primary" type="submit"> submit </button>
-    <button class="btn btn-error" hx-get="/todo/{{ .Task.ID }}" hx-swap="outerHTML" hx-target="#todo-{{ .Task.ID }}"> Cancel </button>
+	<span class="label-text">Todo Title : </span>
+	<input name="title" type="text" placeholder="Title ..." value="{{ .Task.Title }}"
+		class="input input-bordered input-primary w-full max-w-xs mb-2" />
+	<span class="label-text">Todo Description : </span>
+	<textarea name="description" class="mb-2 textarea textarea-primary" value="{{ .Task.Description }}"
+		placeholder="Description ..."></textarea>
+
+	<label class="label cursor-pointer">
+		<span class="label-text">Mark As Failed</span>
+		<input name="status" value="done" type="checkbox" {{if .Task.Completed}} checked="checked" {{ end }}
+			class="checkbox checkbox-primary" />
+	</label>
+	<button class="btn btn-primary" type="submit"> submit </button>
+	<button class="btn btn-error" hx-get="/todo/{{ .Task.ID }}" hx-swap="outerHTML" hx-target="#todo-{{ .Task.ID }}">
+		Cancel </button>
 </form>
 {{ end }}
 
 {{ define "todo" }}
 <div class="grid grid-cols-2 mb-5  border border-indigo-500 rounded-md p-4" id="todo-{{ .ID }}">
-    <div id="content">
-        <h5 class="text-lg"><b>{{ .Title }}</b></h5>
-        <hr/>
-        <p>{{ .Description }}</p>
-        <p>{{ .TimeSinceCreated }}</p>
-    </div>
+	<div id="content">
+		<h5 class="text-lg"><b>{{ .Title }}</b></h5>
+		<hr />
+		<p>{{ .Description }}</p>
+		<p>{{ .TimeSinceCreated }}</p>
+	</div>
 
-    <div id="action-button" class="mt-4 text-right space-y-2">
-        <button class="btn btn-success w-16" hx-get="/todo/{{ .ID }}/update" hx-swap="innerHTML" hx-target="#todo-{{ .ID }}">edit</button>
-        <button class="btn btn-error w-16" hx-delete="/todo/{{ .ID }}" hx-swap="outerHTML" hx-target="#todo-{{ .ID }}">delete</button>
-    </div>
+	<div id="action-button" class="mt-4 text-right space-y-2">
+		<button class="btn btn-success w-16" hx-get="/todo/{{ .ID }}/update" hx-swap="innerHTML"
+			hx-target="#todo-{{ .ID }}">edit</button>
+		<button class="btn btn-error w-16" hx-delete="/todo/{{ .ID }}" hx-swap="outerHTML"
+			hx-target="#todo-{{ .ID }}">delete</button>
+	</div>
 </div>
 {{ end }}
